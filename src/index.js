@@ -1,9 +1,11 @@
-const express = require('express');
-const rotas = require('./router');
+require("dotenv").config();
+
+const express = require("express");
+const router = require("./router");
 
 const app = express();
 
 app.use(express.json());
-app.use(rotas);
+app.use(router);
 
 app.listen(3000);
