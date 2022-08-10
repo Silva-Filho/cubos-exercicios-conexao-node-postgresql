@@ -63,23 +63,52 @@ const obterAutor = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const autor = await conexao.query("select * from autores where id = $1", [id]);
+        const queryAutor = `
+            select 
+                a.id as id_autor,
+                a.nome as nome_autor,
+                a.idade
+            from autores a 
+            where a.id = $1
+        `;
 
-        if (autor.rowCount === 0) {
+        const { rows: autor } = await conexao.query(queryAutor, [id]);
+
+        if (autor.length === 0) {
             return res.status(404).json("Autor não encontrado.");
         }
 
+        const queryLivros = `
+            select 
+                l.id as id_livro, 
+                l.nome as nome_livro, 
+                l.editora, 
+                l.genero, 
+                l.data_publicacao
+            from livros l 
+            where l.id_autor = $1
+        `;
         // @ts-ignore
-        const { rows: livros } = await conexao.query("select * from livros where id_autor = $1", [autor.rows[0].id]);
+        const { rows: livros } = await conexao.query(queryLivros, [autor[0].id_autor]);
         // @ts-ignore
-        autor.rows[0].livros = livros;
+        autor[0].livros = livros;
+        // @ts-ignore
+        for (const livro of autor[0].livros) {
+            const query = `
+                select 
+                    count(status_emprestimo) 
+                from emprestimos 
+                where id_livro = $1
+            `;
+            // @ts-ignore
+            const { rows: emprestimos } = await conexao.query(query, [livro.id_livro]);
+            // @ts-ignore
+            const { count } = emprestimos[0];
+            // @ts-ignore
+            livro.emprestimos = Number(count);
+        }
 
-        /* // @ts-ignore
-        const { rows: emprestimos } = await conexao.query("select * from emprestimos where id_autor = $1", [autor.id]);
-        // @ts-ignore
-        autor.emprestimos = emprestimos; */
-
-        return res.status(200).json(autor.rows[0]);
+        return res.status(200).json(autor[0]);
     } catch (error) {
         return res.status(400).json(error.message);
     }
