@@ -17,7 +17,7 @@ CREATE TABLE livros (
     editora VARCHAR(100),
     genero VARCHAR(50) NOT NULL,
     data_publicacao DATE
-    /* FOREIGN KEY (id_autor) REFERENCES autores(id) */
+    -- FOREIGN KEY (id_autor) REFERENCES autores(id)
 );
 
 DROP TABLE IF EXISTS usuarios;
@@ -28,10 +28,13 @@ CREATE TABLE usuarios (
     idade SMALLINT,
     email VARCHAR(50) NOT NULL UNIQUE,
     telefone CHAR(11),
-    cpf CHAR(11) NOT NULL UNIQUE
+    -- cpf CHAR(11) NOT NULL UNIQUE,
+    cpf BIGINT NOT NULL UNIQUE CHECK(cpf > 0 AND cpf<=99999999999),
 );
 
 DROP TABLE IF EXISTS emprestimos;
+
+CREATE TYPE type_status_emprestimo AS ENUM ('pendente', 'devolvido');
 
 CREATE TABLE emprestimos (
     id SERIAL PRIMARY KEY,
@@ -40,5 +43,6 @@ CREATE TABLE emprestimos (
     -- o CHAR(9) faz surgir um espaço vazio no final do 'pendente' 
     -- para poder usar os 9 espaços determinados;
     -- talvez trocar para VARCHAR(9) resolva.
-    status CHAR(9) DEFAULT 'pendente'
+    -- status CHAR(9) DEFAULT 'pendente',
+    status_emprestimo type_status_emprestimo DEFAULT 'pendente',
 );

@@ -16,11 +16,11 @@ VALUES
 
 INSERT INTO usuarios(nome, idade, email, telefone, cpf) 
 VALUES 
-('Aretha Montgomery', 30, 'augue.id.ante@odioAliquam.com', '83301247289', '80371350042'),
-('Camden H. Bartlett', 15, 'turpis.vitae.purus@risusDuisa.ca', '07351620035', '67642869061'),
-('Raja W. Coffey Thomas', 30, 'raja.feugiat@nonummy.com', '05326108887', '63193310034'),
-('Elton D. Olsen', 29, 'auctor@duiFuscediam.edu', '66367637073', '75670505018'),
-('Elmo K. Greer', 18, 'risus.Duis@eget.ca', '12382472542', '82539841031');
+('Aretha Montgomery', 30, 'augue.id.ante@odioAliquam.com', '83301247289', 80371350042),
+('Camden H. Bartlett', 15, 'turpis.vitae.purus@risusDuisa.ca', '07351620035', 67642869061),
+('Raja W. Coffey Thomas', 30, 'raja.feugiat@nonummy.com', '05326108887', 63193310034),
+('Elton D. Olsen', 29, 'auctor@duiFuscediam.edu', '66367637073', 75670505018),
+('Elmo K. Greer', 18, 'risus.Duis@eget.ca', '12382472542', 82539841031);
 
 INSERT INTO emprestimos(id_usuario, id_livro) 
 VALUES (1, 2), (2, 1), (3, 3), (3, 5), (4, 6), (5, 4), (3, 6);
