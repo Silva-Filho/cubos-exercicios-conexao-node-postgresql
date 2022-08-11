@@ -13,7 +13,6 @@ const listarUsuarios = async (req, res) => {
             from usuarios
         `;
 
-        // const { rows: usuarios } = await conexao.query("select * from usuarios");
         const { rows: usuarios } = await conexao.query(query);
 
         for (const usuario of usuarios) {
@@ -48,26 +47,38 @@ const obterUsuario = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const usuario = await conexao.query("select * from usuarios where id = $1", [id]);
+        const queryUsuario = `
+            select 
+                id as id_usuario,
+                nome as nome_usuario,
+                idade,
+                email,
+                telefone,
+                cpf
+            from usuarios
+            where id = $1
+        `;
+
+        const usuario = await conexao.query(queryUsuario, [id]);
         
         if (usuario.rowCount === 0) {
             return res.status(404).json("Usuário não encontrado.");
         }
 
-        const query = `
+        const queryEmprestimo = `
             select 
-                e.id, 
+                e.id as id_emprestimo, 
                 l.nome as nome_livro, 
                 l.editora, 
                 l.genero, 
                 l.data_publicacao, 
-                e.status
+                e.status_emprestimo
             from emprestimos e
             left join livros l on e.id_livro = l.id 
             where e.id_usuario = $1
         `;
         // @ts-ignore
-        const { rows: emprestimos } = await conexao.query(query, [usuario.rows[0].id]);
+        const { rows: emprestimos } = await conexao.query(queryEmprestimo, [usuario.rows[0].id_usuario]);
 
         // @ts-ignore
         usuario.rows[0].emprestimos = emprestimos;
