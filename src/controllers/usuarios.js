@@ -1,24 +1,38 @@
-const conexao = require('../conexao');
+const conexao = require("../conexao");
 
 const listarUsuarios = async (req, res) => {
     try {
-        const { rows: usuarios } = await conexao.query('select * from usuarios');
+        const query = `
+            select 
+                id as id_usuario,
+                nome as nome_usuario,
+                idade,
+                email,
+                telefone,
+                cpf
+            from usuarios
+        `;
+
+        // const { rows: usuarios } = await conexao.query("select * from usuarios");
+        const { rows: usuarios } = await conexao.query(query);
 
         for (const usuario of usuarios) {
             const query = `
                 select 
-                    e.id, 
+                    e.id as id_emprestimo, 
+                    e.id_livro,
                     l.nome as nome_livro, 
                     l.editora, 
                     l.genero, 
                     l.data_publicacao, 
-                    e.status
+                    e.status_emprestimo
                 from emprestimos e
                 left join livros l on e.id_livro = l.id 
                 where e.id_usuario = $1
             `;
             // @ts-ignore
-            const { rows: emprestimos } = await conexao.query(query, [usuario.id]);
+            // const { rows: emprestimos } = await conexao.query(query, [usuario.id]);
+            const { rows: emprestimos } = await conexao.query(query, [usuario.id_usuario]);
             
             // @ts-ignore
             usuario.emprestimos = emprestimos;
@@ -34,7 +48,7 @@ const obterUsuario = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const usuario = await conexao.query('select * from usuarios where id = $1', [id]);
+        const usuario = await conexao.query("select * from usuarios where id = $1", [id]);
         
         if (usuario.rowCount === 0) {
             return res.status(404).json("Usuário não encontrado.");
@@ -72,7 +86,7 @@ const cadastrarUsuario = async (req, res) => {
             return res.status(400).json("Os campos nome, email e CPF são obrigatórios.");
         }
     
-        const { rows: usuarios } = await conexao.query('select * from usuarios');
+        const { rows: usuarios } = await conexao.query("select * from usuarios");
 
         const hasEmail = usuarios.some( item => {
             // @ts-ignore
@@ -110,7 +124,7 @@ const atualizarUsuario = async (req, res) => {
     const { nome, idade, email, telefone, cpf } = req.body;
 
     try {
-        const usuario = await conexao.query('select * from usuarios where id = $1', [id]);
+        const usuario = await conexao.query("select * from usuarios where id = $1", [id]);
 
         if (usuario.rowCount === 0) {
             return res.status(404).json("Usuário não encontrado.");
@@ -121,7 +135,7 @@ const atualizarUsuario = async (req, res) => {
         }
 
         // @ts-ignore
-        const { rows: usuarios } = await conexao.query('select * from usuarios where id != $1', [usuario.rows[0].id]);
+        const { rows: usuarios } = await conexao.query("select * from usuarios where id != $1", [usuario.rows[0].id]);
 
         const hasEmail = usuarios.some( item => {
             // @ts-ignore
@@ -164,20 +178,20 @@ const excluirUsuario = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const usuario = await conexao.query('select * from usuarios where id = $1', [id]);
+        const usuario = await conexao.query("select * from usuarios where id = $1", [id]);
 
         if (usuario.rowCount === 0) {
             return res.status(404).json("Usuário não encontrado.");
         }
 
-        const existeEmprestimos = await conexao.query('select * from emprestimos where id_usuario = $1', [id]);
+        const existeEmprestimos = await conexao.query("select * from emprestimos where id_usuario = $1", [id]);
         console.log(existeEmprestimos);
         // if (existeEmprestimos.rowCount) ?????
         if (existeEmprestimos.rowCount > 0) {
             return res.status(400).json("Não é possível excluir um usuário que possui empréstimos.");
         }
 
-        const query = 'delete from usuarios where id = $1';
+        const query = "delete from usuarios where id = $1";
         const usuarioExcluido = await conexao.query(query, [id]);
 
         if (usuarioExcluido.rowCount === 0) {
