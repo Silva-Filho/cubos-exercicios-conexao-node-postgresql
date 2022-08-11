@@ -196,7 +196,7 @@ const excluirUsuario = async (req, res) => {
         }
 
         const existeEmprestimos = await conexao.query("select * from emprestimos where id_usuario = $1", [id]);
-        console.log(existeEmprestimos);
+        
         // if (existeEmprestimos.rowCount) ?????
         if (existeEmprestimos.rowCount > 0) {
             return res.status(400).json("Não é possível excluir um usuário que possui empréstimos.");
