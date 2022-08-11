@@ -28,7 +28,14 @@ const obterEmprestimo = async (req, res) => {
 
     try {
         const query = `
-            select e.id, u.nome as usuario, u.telefone, u.email, l.nome as livro, e.status from emprestimos e
+            select 
+                e.id as id_emprestimo, 
+                u.nome as nome_usuario, 
+                u.telefone, 
+                u.email, 
+                l.nome as nome_livro, 
+                e.status_emprestimo 
+            from emprestimos e
             left join usuarios u on e.id_usuario = u.id 
             left join livros l on e.id_livro = l.id 
             where e.id = $1
@@ -54,19 +61,19 @@ const cadastrarEmprestimo = async (req, res) => {
             return res.status(400).json("Os campos id_usuario e id_livro são obrigatórios.");
         }
 
-        const usuario = await conexao.query('select * from usuarios where id = $1', [id_usuario]);
+        const usuario = await conexao.query("select * from usuarios where id = $1", [id_usuario]);
 
         if (usuario.rowCount === 0) {
             return res.status(404).json("Usuario não encontrado.");
         }
 
-        const livro = await conexao.query('select * from livros where id = $1', [id_livro]);
+        const livro = await conexao.query("select * from livros where id = $1", [id_livro]);
 
         if (livro.rowCount === 0) {
             return res.status(404).json("Livro não encontrado.");
         }
 
-        const query = 'insert into emprestimos (id_usuario, id_livro) values ($1, $2)';
+        const query = "insert into emprestimos (id_usuario, id_livro) values ($1, $2)";
         const emprestimo = await conexao.query(query, [id_usuario, id_livro]);
 
         if (emprestimo.rowCount === 0) {
@@ -81,14 +88,9 @@ const cadastrarEmprestimo = async (req, res) => {
 
 const atualizarEmprestimo = async (req, res) => {
     const { id } = req.params;
-    /* const { id_usuario, id_livro, status } = req.body; */
     const { status } = req.body;
 
     try {
-        /* if (id_usuario || id_livro) {
-            return res.status(400).json("Os campos id_usuario e id_livro não podem ser alterados.");
-        } */
-
         if (!status) {
             return res.status(400).json("O campo status é obrigatório.");
         }
@@ -97,13 +99,13 @@ const atualizarEmprestimo = async (req, res) => {
             return res.status(400).json("Status informado incompatível com 'pendente' ou 'devolvido'.");
         }
 
-        const emprestimo = await conexao.query('select * from emprestimos where id = $1', [id]);
+        const emprestimo = await conexao.query("select * from emprestimos where id = $1", [id]);
 
         if (emprestimo.rowCount === 0) {
             return res.status(404).json("Empréstimo não encontrado.");
         }
 
-        const query = 'update emprestimos set status = $1 where id = $2';
+        const query = "update emprestimos set status = $1 where id = $2";
         const emprestimoAtualizado = await conexao.query(query, [status, id]);
 
         if (emprestimoAtualizado.rowCount === 0) {
@@ -120,7 +122,7 @@ const excluirEmprestimo = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const emprestimo = await conexao.query('select * from emprestimos where id = $1', [id]);
+        const emprestimo = await conexao.query("select * from emprestimos where id = $1", [id]);
 
         if (emprestimo.rowCount === 0) {
             return res.status(404).json("Empréstimo não encontrado.");
@@ -131,7 +133,7 @@ const excluirEmprestimo = async (req, res) => {
             return res.status(404).json("Não é possível excluir empréstimo com status igual a pendente.");
         }
 
-        const query = 'delete from emprestimos where id = $1';
+        const query = "delete from emprestimos where id = $1";
         const emprestimoExcluido = await conexao.query(query, [id]);
 
         if (emprestimoExcluido.rowCount === 0) {
