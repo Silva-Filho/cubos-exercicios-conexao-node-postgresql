@@ -24,7 +24,11 @@ rotas.put("/autores/:id",
     validarAutores.verificarAutorExiste, 
     autores.atualizarAutor
 );
-rotas.delete("/autores/:id", autores.excluirAutor);
+rotas.delete("/autores/:id", 
+    validarAutores.verificarAutorExiste,
+    validarAutores.verificarAutorTemLivroCadastrado,  
+    autores.excluirAutor
+);
 
 // livros
 rotas.get("/livros", livros.listarLivros);

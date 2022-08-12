@@ -138,19 +138,6 @@ const excluirAutor = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const autor = await conexao.query("select * from autores where id = $1", [id]);
-
-        if (autor.rowCount === 0) {
-            return res.status(404).json("Autor não encontrado.");
-        }
-
-        // @ts-ignore
-        const existeLivros = await conexao.query("select * from livros where id_autor = $1", [autor.rows[0].id]);
-
-        if (existeLivros.rowCount > 0) {
-            return res.status(400).json("Não é possível excluir um autor que possui livros cadastrados.");
-        }
-
         const query = "delete from autores where id = $1";
         const autorExcluido = await conexao.query(query, [id]);
 
@@ -158,7 +145,7 @@ const excluirAutor = async (req, res) => {
             return res.status(404).json("Não foi possível excluir o autor.");
         }
 
-        return res.status(200).json("Autor foi excluido com sucesso.");
+        return res.status(200).json("Autor foi excluído com sucesso.");
     } catch (error) {
         return res.status(400).json(error.message);
     }
@@ -169,5 +156,5 @@ module.exports = {
     obterAutor,
     cadastrarAutor,
     atualizarAutor,
-    excluirAutor
+    excluirAutor,
 };
