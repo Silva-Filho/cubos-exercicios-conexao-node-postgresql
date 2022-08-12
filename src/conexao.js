@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const { Pool } = require("pg");
 
 const pool = new Pool({
