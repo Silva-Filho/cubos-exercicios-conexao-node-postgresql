@@ -23,29 +23,23 @@ const listarLivros = async (req, res) => {
 };
 
 const obterLivro = async (req, res) => {
-    const { id } = req.params;
-
     try {
+        const { livro } = req;
+
         const query = `
-            select 
-                l.id, 
-                l.nome as nome_livro, 
-                a.nome as nome_autor, 
-                l.genero, 
-                l.editora, 
-                l.data_publicacao 
-            from livros l 
-            left join autores a on l.id_autor = a.id 
-            where l.id = $1
-        `;
+                select 
+                    count(status_emprestimo) 
+                from emprestimos 
+                where id_livro = $1
+            `;
+            // @ts-ignore
+        const { rows: emprestimos } = await conexao.query(query, [livro.id_livro]);
+        // @ts-ignore
+        const { count } = emprestimos[0];
+        // @ts-ignore
+        livro.emprestimos = Number(count);
 
-        const livro = await conexao.query(query, [id]);
-
-        if (livro.rowCount === 0) {
-            return res.status(404).json("Livro não encontrado.");
-        }
-
-        return res.status(200).json(livro.rows[0]);
+        return res.status(200).json(livro);
     } catch (error) {
         return res.status(400).json(error.message);
     }
@@ -133,7 +127,7 @@ const excluirLivro = async (req, res) => {
         const livroExcluido = await conexao.query(query, [id]);
 
         if (livroExcluido.rowCount === 0) {
-            return res.status(400).json("Não foi possível excluir o livro.")
+            return res.status(400).json("Não foi possível excluir o livro.");
         }
 
         return res.status(200).json("O livro foi excluido com sucesso.");

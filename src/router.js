@@ -6,6 +6,7 @@ const usuarios = require("./controllers/usuarios");
 const emprestimos = require("./controllers/emprestimos");
 // Middlewares:
 const validarAutores = require("./middlewares/autores");
+const validarLivros = require("./middlewares/livros");
 
 const rotas = express();
 
@@ -32,7 +33,10 @@ rotas.delete("/autores/:id",
 
 // livros
 rotas.get("/livros", livros.listarLivros);
-rotas.get("/livros/:id", livros.obterLivro);
+rotas.get("/livros/:id", 
+    validarLivros.verificarLivroExiste, 
+    livros.obterLivro
+);
 rotas.post("/livros", livros.cadastrarLivro);
 rotas.put("/livros/:id", livros.atualizarLivro);
 rotas.delete("/livros/:id", livros.excluirLivro);
