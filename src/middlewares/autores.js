@@ -1,5 +1,5 @@
 const conexao = require("../conexao");
-const { schemaCadastrarOuAtualizarAutor } = require("../schemas/schemasAutores");
+const { schemaCadastrarOuAtualizarAutor } = require("../schemas/autores");
 
 const verificarAutorExiste = async (req, res, next) => {
     const { id } = req.params;
