@@ -15,7 +15,8 @@ rotas.get("/autores/:id",
     validarAutores.verificarAutorExiste, 
     autores.obterAutor
 );
-rotas.post("/autores",  
+rotas.post("/autores", 
+    validarAutores.verificarNomeAutorFoiInformado, 
     autores.cadastrarAutor
 );
 rotas.put("/autores/:id", autores.atualizarAutor);

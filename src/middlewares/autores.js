@@ -27,8 +27,21 @@ const verificarAutorExiste = async (req, res, next) => {
     }
 };
 
+const verificarNomeAutorFoiInformado = async (req, res, next) => {
+    try {
+        const { nome } = req.body;
 
+        if (!nome) {
+            return res.status(400).json("O campo nome é obrigatório.");
+        }
+    
+        next(); 
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+};
 
 module.exports = {
     verificarAutorExiste,
+    verificarNomeAutorFoiInformado,
 };

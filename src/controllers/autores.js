@@ -102,9 +102,9 @@ const obterAutor = async (req, res) => {
 const cadastrarAutor = async (req, res) => {
     const { nome, idade } = req.body;
 
-    if (!nome) {
+    /* if (!nome) {
         return res.status(400).json("O campo nome é obrigatório.");
-    }
+    } */
 
     try {
         const query = "insert into autores (nome, idade) values ($1, $2)";
