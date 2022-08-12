@@ -19,7 +19,11 @@ rotas.post("/autores",
     validarAutores.verificarNomeAutorFoiInformado, 
     autores.cadastrarAutor
 );
-rotas.put("/autores/:id", autores.atualizarAutor);
+rotas.put("/autores/:id", 
+    validarAutores.verificarNomeAutorFoiInformado, 
+    validarAutores.verificarAutorExiste, 
+    autores.atualizarAutor
+);
 rotas.delete("/autores/:id", autores.excluirAutor);
 
 // livros

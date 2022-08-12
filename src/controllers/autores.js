@@ -101,7 +101,7 @@ const obterAutor = async (req, res) => {
 
 const cadastrarAutor = async (req, res) => {
     const { nome, idade } = req.body;
-    
+
     try {
         const query = "insert into autores (nome, idade) values ($1, $2)";
         const autor = await conexao.query(query, [nome, idade]);
@@ -121,16 +121,6 @@ const atualizarAutor = async (req, res) => {
     const { nome, idade } = req.body;
 
     try {
-        if (!nome) {
-            return res.status(400).json("O campo nome é obrigatório.");
-        }
-
-        const autor = await conexao.query("select * from autores where id = $1", [id]);
-
-        if (autor.rowCount === 0) {
-            return res.status(404).json("Autor não encontrado");
-        }
-
         const query = "update autores set nome = $1, idade = $2 where id = $3";
         const autorAtualizado = await conexao.query(query, [nome, idade, id]);
 
