@@ -1,4 +1,5 @@
 const conexao = require("../conexao");
+const { schemaCadastrarOuAtualizarAutor } = require("../schemas/schemasAutores");
 
 const verificarAutorExiste = async (req, res, next) => {
     const { id } = req.params;
@@ -29,12 +30,8 @@ const verificarAutorExiste = async (req, res, next) => {
 
 const verificarNomeAutorFoiInformado = async (req, res, next) => {
     try {
-        const { nome } = req.body;
+        await schemaCadastrarOuAtualizarAutor.validate(req.body);
 
-        if (!nome) {
-            return res.status(400).json("O campo nome é obrigatório.");
-        }
-    
         next(); 
     } catch (error) {
         return res.status(400).json(error.message);
