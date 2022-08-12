@@ -60,24 +60,9 @@ const listarAutores = async (req, res) => {
 };
 
 const obterAutor = async (req, res) => {
-    const { id } = req.params;
+    const { autor } = req;
 
     try {
-        const queryAutor = `
-            select 
-                a.id as id_autor,
-                a.nome as nome_autor,
-                a.idade
-            from autores a 
-            where a.id = $1
-        `;
-
-        const { rows: autor } = await conexao.query(queryAutor, [id]);
-
-        if (autor.length === 0) {
-            return res.status(404).json("Autor não encontrado.");
-        }
-
         const queryLivros = `
             select 
                 l.id as id_livro, 
@@ -129,7 +114,7 @@ const cadastrarAutor = async (req, res) => {
             return res.status(400).json("Não foi possível cadastrar o autor.");
         }
 
-        return res.status(200).json("Autor cadastrado com sucesso.")
+        return res.status(200).json("Autor cadastrado com sucesso.");
     } catch (error) {
         return res.status(400).json(error.message);
     }
