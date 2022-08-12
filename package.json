@@ -12,7 +12,9 @@
     "license": "ISC",
     "dependencies": {
         "express": "^4.17.1",
-        "pg": "^8.6.0"
+        "pg": "^8.6.0",
+        "yup": "^0.32.11",
+        "yup-locales": "^1.2.10"
     },
     "devDependencies": {
         "dotenv": "^16.0.1",
