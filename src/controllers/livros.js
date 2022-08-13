@@ -61,13 +61,9 @@ const obterLivro = async (req, res) => {
 };
 
 const cadastrarLivro = async (req, res) => {
-    const { id_autor, nome, genero, editora, data_publicacao } = req.body;
-
-    if (!id_autor || !nome || !genero) {
-        return res.status(400).json("Os campos id_autor, nome e genero são obrigatórios.");
-    }
-
     try {
+        const { id_autor, nome, genero, editora, data_publicacao } = req.body;
+
         const query = `
             insert into livros (id_autor, nome, genero, editora, data_publicacao) 
             values ($1, $2, $3, $4, $5)
