@@ -42,7 +42,12 @@ rotas.post("/livros",
     validarAutores.verificarAutorExiste,
     livros.cadastrarLivro,
 );
-rotas.put("/livros/:id", livros.atualizarLivro);
+rotas.put("/livros/:id", 
+    validarLivros.verificarLivroExiste, 
+    validarLivros.verificarDadosAtualizacaoLivro,
+    validarAutores.verificarAutorExiste,
+    livros.atualizarLivro
+);
 rotas.delete("/livros/:id", livros.excluirLivro);
 
 // usuarios
