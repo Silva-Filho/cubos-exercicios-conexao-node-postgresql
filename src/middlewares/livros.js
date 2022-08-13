@@ -1,5 +1,8 @@
 const conexao = require("../conexao");
-const { schemaCadastroLivro } = require("../schemas/livros");
+const { 
+    schemaCadastroLivro, 
+    schemaAtualizacaoLivro 
+} = require("../schemas/livros");
 
 const verificarLivroExiste = async (req, res, next) => {
     try {
@@ -21,7 +24,7 @@ const verificarLivroExiste = async (req, res, next) => {
         const { rows: livro } = await conexao.query(query, [id]);
 
         if (livro.length === 0) {
-            return res.status(404).json("Livro não encontrado.");
+            return res.status(404).json(`O id params ${id} informado não corresponde a nenhum livro cadastrado.`);
         }
         
         req.livro = livro[0];
@@ -43,7 +46,19 @@ const verificarDadosCadastroLivro = async (req, res, next) => {
     
 };
 
+const verificarDadosAtualizacaoLivro = async (req, res, next) => {
+    try {
+        await schemaAtualizacaoLivro.validate(req.body);
+
+        next();
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+    
+};
+
 module.exports = {
     verificarLivroExiste,
     verificarDadosCadastroLivro,
+    verificarDadosAtualizacaoLivro,
 };
