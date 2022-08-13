@@ -16,6 +16,21 @@ const listarLivros = async (req, res) => {
         
         const { rows: livros } = await conexao.query(query);
 
+        for (const livro of livros) {
+            const query = `
+                select 
+                    count(status_emprestimo) 
+                from emprestimos 
+                where id_livro = $1
+            `;
+            // @ts-ignore
+            const { rows: emprestimos } = await conexao.query(query, [livro.id_livro]);
+            // @ts-ignore
+            const { count } = emprestimos[0];
+            // @ts-ignore
+            livro.emprestimos = Number(count);
+        }
+
         return res.status(200).json(livros);
     } catch (error) {
         return res.status(400).json(error.message);
