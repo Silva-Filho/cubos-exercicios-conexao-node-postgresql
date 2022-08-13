@@ -1,30 +1,40 @@
 const conexao = require("../conexao");
 const { schemaCadastrarOuAtualizarAutor } = require("../schemas/autores");
+const { obterAutor } = require("../utils/autores");
 
 const verificarAutorExiste = async (req, res, next) => {
-    const { id } = req.params;
+    const url = req.url;
 
-    try {
-        const queryAutor = `
-            select 
-                a.id as id_autor,
-                a.nome as nome_autor,
-                a.idade
-            from autores a 
-            where a.id = $1
-        `;
+    if (url.includes("/autores")) {
+        try {
+            const { id } = req.params;
 
-        const { rows: autor } = await conexao.query(queryAutor, [id]);
+            req.autor = await obterAutor(res, id);
 
-        if (autor.length === 0) {
-            return res.status(404).json("Autor não encontrado.");
+            if (!req.autor[0]) {
+                return;
+            }
+
+            next();
+        } catch (error) {
+            return res.status(400).json(error.message);
         }
+    }
 
-        req.autor = autor;
+    if (url.includes("/livros")) {
+        try {
+            const { id_autor } = req.body;
 
-        next();
-    } catch (error) {
-        return res.status(400).json(error.message);
+            req.autor = await obterAutor(res, id_autor);
+
+            if (!req.autor[0]) {
+                return;
+            }
+
+            next();
+        } catch (error) {
+            return res.status(400).json(error.message);
+        }
     }
 };
 
@@ -32,7 +42,7 @@ const verificarNomeAutorFoiInformado = async (req, res, next) => {
     try {
         await schemaCadastrarOuAtualizarAutor.validate(req.body);
 
-        next(); 
+        next();
     } catch (error) {
         return res.status(400).json(error.message);
     }
@@ -49,7 +59,7 @@ const verificarAutorTemLivroCadastrado = async (req, res, next) => {
         if (existeLivros.rowCount > 0) {
             return res.status(400).json("Não é possível excluir um autor que possui livros cadastrados.");
         }
-        
+
         next();
     } catch (error) {
         return res.status(400).json(error.message);
