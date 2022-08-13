@@ -37,7 +37,11 @@ rotas.get("/livros/:id",
     validarLivros.verificarLivroExiste, 
     livros.obterLivro
 );
-rotas.post("/livros", livros.cadastrarLivro);
+rotas.post("/livros", 
+    validarLivros.verificarDadosCadastroLivro, 
+    validarAutores.verificarAutorExiste,
+    livros.cadastrarLivro,
+);
 rotas.put("/livros/:id", livros.atualizarLivro);
 rotas.delete("/livros/:id", livros.excluirLivro);
 
