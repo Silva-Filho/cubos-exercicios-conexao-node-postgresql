@@ -1,4 +1,5 @@
 const conexao = require("../conexao");
+const { schemaCadastroLivro } = require("../schemas/livros");
 
 const verificarLivroExiste = async (req, res, next) => {
     try {
@@ -31,6 +32,18 @@ const verificarLivroExiste = async (req, res, next) => {
     } 
 };
 
+const verificarDadosCadastroLivro = async (req, res, next) => {
+    try {
+        await schemaCadastroLivro.validate(req.body);
+
+        next();
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+    
+};
+
 module.exports = {
     verificarLivroExiste,
+    verificarDadosCadastroLivro,
 };
