@@ -25,10 +25,12 @@ const verificarAutorExiste = async (req, res, next) => {
         try {
             const { id_autor } = req.body;
 
-            req.autor = await obterAutor(res, id_autor);
+            if (id_autor) {
+                req.autor = await obterAutor(res, id_autor);
 
-            if (!req.autor[0]) {
-                return;
+                if (!req.autor[0]) {
+                    return;
+                }
             }
 
             next();
