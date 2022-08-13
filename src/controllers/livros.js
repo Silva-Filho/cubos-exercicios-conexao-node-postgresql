@@ -82,17 +82,9 @@ const cadastrarLivro = async (req, res) => {
 };
 
 const atualizarLivro = async (req, res) => {
-    const { id } = req.params;
-    const { id_autor, nome, genero, editora, data_publicacao } = req.body;
-
-    /* Validações???? */
-
     try {
-        const livro = await conexao.query("select * from livros where id = $1", [id]);
-
-        if (livro.rowCount === 0) {
-            return res.status(404).json("Livro não encontrado.");
-        }
+        const { id } = req.params;
+        const { id_autor, nome, genero, editora, data_publicacao } = req.body;
 
         const query = `
             update livros 
