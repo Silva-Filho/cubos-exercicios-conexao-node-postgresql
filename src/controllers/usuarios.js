@@ -72,28 +72,8 @@ const obterUsuario = async (req, res) => {
 };
 
 const cadastrarUsuario = async (req, res) => {
-    const { nome, idade, email, telefone, cpf } = req.body;
-    
     try {
-        if ( !nome || !email || !cpf ) {
-            return res.status(400).json("Os campos nome, email e CPF são obrigatórios.");
-        }
-    
-        const { rows: usuarios } = await conexao.query("select * from usuarios");
-
-        const hasEmail = usuarios.some( item => {
-            // @ts-ignore
-            return item.email === email;
-        } );
-
-        const hasCpf = usuarios.some( item => {
-            // @ts-ignore
-            return item.cpf === cpf;
-        } );
-    
-        if ( hasEmail || hasCpf ) {
-            return res.status(400).json("O campo email ou CPF já está cadastrado.");
-        }
+        const { nome, idade, email, telefone, cpf } = req.body;
 
         const query = `
             insert into usuarios (nome, idade, email, telefone, cpf) 
