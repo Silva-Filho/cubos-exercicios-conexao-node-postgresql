@@ -41,7 +41,34 @@ const verificarDadosCadastroUsuario = async (req, res, next) => {
     }
 };
 
+const verificarCpfOuEmailUnicos = async (req, res, next) => {
+    try {
+        const { email, cpf } = req.body;
+
+        const { rows: usuarios } = await conexao.query("select * from usuarios");
+
+        const hasEmail = usuarios.some( item => {
+            // @ts-ignore
+            return item.email === email;
+        } );
+
+        const hasCpf = usuarios.some( item => {
+            // @ts-ignore
+            return Number(item.cpf) === cpf;
+        } );
+    
+        if ( hasEmail || hasCpf ) {
+            return res.status(400).json("O campo email ou CPF já está cadastrado.");
+        }
+
+        next();
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+};
+
 module.exports = {
     verificarUsuarioExiste,
     verificarDadosCadastroUsuario,
+    verificarCpfOuEmailUnicos,
 };
