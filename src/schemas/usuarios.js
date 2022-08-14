@@ -5,7 +5,7 @@ const schemaCadastroUsuario = yup.object().shape({
     idade: yup.number().strict(), 
     email: yup.string().email().required(), 
     telefone: yup.string(), 
-    cpf: yup.number().strict(),
+    cpf: yup.number().strict().required(),
 });
 
 module.exports = {
