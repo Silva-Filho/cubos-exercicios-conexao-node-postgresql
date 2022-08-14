@@ -57,8 +57,25 @@ const verificarDadosAtualizacaoLivro = async (req, res, next) => {
     
 };
 
+const verificarLivroPossuiEmprestimo = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const existeEmprestimos = await conexao.query("select * from emprestimos where id_livro = $1", [id]);
+
+        if (existeEmprestimos.rowCount > 0) {
+            return res.status(400).json("Não é possível excluir um livro que possui empréstimos.");
+        }
+
+        next();
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+};
+
 module.exports = {
     verificarLivroExiste,
     verificarDadosCadastroLivro,
     verificarDadosAtualizacaoLivro,
+    verificarLivroPossuiEmprestimo,
 };
