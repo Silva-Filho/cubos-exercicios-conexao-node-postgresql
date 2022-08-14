@@ -61,7 +61,11 @@ rotas.get("/usuarios/:id",
     validarUsuarios.verificarUsuarioExiste, 
     usuarios.obterUsuario
 );
-rotas.post("/usuarios", usuarios.cadastrarUsuario);
+rotas.post("/usuarios", 
+    validarUsuarios.verificarDadosCadastroUsuario, 
+    validarUsuarios.verificarCpfOuEmailUnicos,
+    usuarios.cadastrarUsuario
+);
 rotas.put("/usuarios/:id", usuarios.atualizarUsuario);
 rotas.delete("/usuarios/:id", usuarios.excluirUsuario);
 
