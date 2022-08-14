@@ -1,4 +1,5 @@
 const conexao = require("../conexao");
+const { schemaCadastroUsuario } = require("../schemas/usuarios");
 
 const verificarUsuarioExiste = async (req, res, next) => {
     try {
@@ -30,6 +31,17 @@ const verificarUsuarioExiste = async (req, res, next) => {
     } 
 };
 
+const verificarDadosCadastroUsuario = async (req, res, next) => {
+    try {
+        await schemaCadastroUsuario.validate(req.body);
+
+        next();
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+};
+
 module.exports = {
     verificarUsuarioExiste,
+    verificarDadosCadastroUsuario,
 };
