@@ -113,19 +113,6 @@ const excluirLivro = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const livro = await conexao.query("select * from livros where id = $1", [id]);
-
-        if (livro.rowCount === 0) {
-            return res.status(404).json("Livro não encontrado.");
-        }
-
-        const existeEmprestimos = await conexao.query("select * from emprestimos where livro_id = $1", [id]);
-
-        /* if (existeEmprestimos.rowCount) ????? */
-        if (existeEmprestimos.rowCount > 0) {
-            return res.status(400).json("Não é possível excluir um livro que possui empréstimos.");
-        }
-
         const query = "delete from livros where id = $1";
         const livroExcluido = await conexao.query(query, [id]);
 
