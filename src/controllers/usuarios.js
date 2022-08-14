@@ -44,28 +44,10 @@ const listarUsuarios = async (req, res) => {
 };
 
 const obterUsuario = async (req, res) => {
-    const { id } = req.params;
-
     try {
-        const queryUsuario = `
-            select 
-                id as id_usuario,
-                nome as nome_usuario,
-                idade,
-                email,
-                telefone,
-                cpf
-            from usuarios
-            where id = $1
-        `;
+        const { usuario } = req;
 
-        const usuario = await conexao.query(queryUsuario, [id]);
-        
-        if (usuario.rowCount === 0) {
-            return res.status(404).json("Usuário não encontrado.");
-        }
-
-        const queryEmprestimo = `
+        const query = `
             select 
                 e.id as id_emprestimo, 
                 l.nome as nome_livro, 
@@ -78,12 +60,12 @@ const obterUsuario = async (req, res) => {
             where e.id_usuario = $1
         `;
         // @ts-ignore
-        const { rows: emprestimos } = await conexao.query(queryEmprestimo, [usuario.rows[0].id_usuario]);
+        const { rows: emprestimos } = await conexao.query(query, [usuario.id_usuario]);
 
         // @ts-ignore
-        usuario.rows[0].emprestimos = emprestimos;
+        usuario.emprestimos = emprestimos;
 
-        return res.status(200).json(usuario.rows[0]);
+        return res.status(200).json(usuario);
     } catch (error) {
         return res.status(400).json(error.message);
     }
@@ -124,7 +106,7 @@ const cadastrarUsuario = async (req, res) => {
             return res.status(400).json("Não foi possível cadastrar o usuário.");
         }
 
-        return res.status(200).json("Usuário cadastrado com sucesso.")
+        return res.status(200).json("Usuário cadastrado com sucesso.");
     } catch (error) {
         return res.status(400).json(error.message);
     }
