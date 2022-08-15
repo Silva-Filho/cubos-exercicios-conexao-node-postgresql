@@ -46,16 +46,24 @@ const verificarDadosCadastroUsuario = async (req, res, next) => {
 
 const verificarCpfOuEmailUnicos = async (req, res, next) => {
     try {
+        const { id } = req.params;
         const { email, cpf } = req.body;
 
         const { rows: usuarios } = await conexao.query("select * from usuarios");
 
-        const hasEmail = usuarios.some( item => {
+        const usuariosFiltrados = req.method === "PUT" ? 
+            usuarios.filter( item => {
+                // @ts-ignore
+                return item.id !== Number(id);
+            }) :
+            usuarios;
+
+        const hasEmail = usuariosFiltrados.some( item => {
             // @ts-ignore
             return item.email === email;
         } );
 
-        const hasCpf = usuarios.some( item => {
+        const hasCpf = usuariosFiltrados.some( item => {
             // @ts-ignore
             return Number(item.cpf) === cpf;
         } );
@@ -72,7 +80,6 @@ const verificarCpfOuEmailUnicos = async (req, res, next) => {
 
 const verificarDadosAtualizacaoUsuario = async (req, res, next) => {
     try {
-        // console.log({method: req.method});
         await schemaAtualizacaoUsuario.validate(req.body);
 
         next();
