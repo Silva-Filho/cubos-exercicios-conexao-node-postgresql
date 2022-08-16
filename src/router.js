@@ -72,7 +72,11 @@ rotas.put("/usuarios/:id",
     validarUsuarios.verificarCpfOuEmailUnicos, 
     usuarios.atualizarUsuario
 );
-rotas.delete("/usuarios/:id", usuarios.excluirUsuario);
+rotas.delete("/usuarios/:id", 
+    validarUsuarios.verificarUsuarioExiste, 
+    validarUsuarios.verificarUsuarioTemEmprestimoPendente, 
+    usuarios.excluirUsuario
+);
 
 // emprestimos
 rotas.get("/emprestimos", emprestimos.listarEmprestimos);
