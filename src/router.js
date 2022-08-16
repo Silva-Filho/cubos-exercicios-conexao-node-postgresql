@@ -66,7 +66,12 @@ rotas.post("/usuarios",
     validarUsuarios.verificarCpfOuEmailUnicos,
     usuarios.cadastrarUsuario
 );
-rotas.put("/usuarios/:id", usuarios.atualizarUsuario);
+rotas.put("/usuarios/:id", 
+    validarUsuarios.verificarUsuarioExiste, 
+    validarUsuarios.verificarDadosAtualizacaoUsuario, 
+    validarUsuarios.verificarCpfOuEmailUnicos, 
+    usuarios.atualizarUsuario
+);
 rotas.delete("/usuarios/:id", usuarios.excluirUsuario);
 
 // emprestimos
