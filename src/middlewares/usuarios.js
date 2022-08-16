@@ -83,7 +83,7 @@ const verificarDadosAtualizacaoUsuario = async (req, res, next) => {
         await schemaAtualizacaoUsuario.validate(req.body);
 
         const { nome, idade, email, telefone, cpf } = req.body;
-        
+
         let { usuario } = req;
 
         usuario = {
@@ -102,9 +102,33 @@ const verificarDadosAtualizacaoUsuario = async (req, res, next) => {
     }
 };
 
+const verificarUsuarioTemEmprestimoPendente = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const query = `
+            select * 
+            from emprestimos 
+            where id_usuario = $1 and status_emprestimo ='pendente'
+        `;
+        const { rows: emprestimoPendente } = await conexao.query(query, [id]);
+        
+        if (emprestimoPendente.length > 0) {
+            return res
+                .status(400)
+                .json("Não é possível excluir usuário que possui empréstimo(s) pendente(s).");
+        }
+        
+        next();
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+};
+
 module.exports = {
     verificarUsuarioExiste,
     verificarDadosCadastroUsuario,
     verificarCpfOuEmailUnicos,
     verificarDadosAtualizacaoUsuario,
+    verificarUsuarioTemEmprestimoPendente,
 };
