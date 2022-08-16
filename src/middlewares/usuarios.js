@@ -82,6 +82,20 @@ const verificarDadosAtualizacaoUsuario = async (req, res, next) => {
     try {
         await schemaAtualizacaoUsuario.validate(req.body);
 
+        const { nome, idade, email, telefone, cpf } = req.body;
+        
+        let { usuario } = req;
+
+        usuario = {
+            nome_usuario: nome ? nome : usuario.nome_usuario,
+            idade: idade ? idade : usuario.idade,
+            email: email ? email : usuario.email,
+            telefone: telefone ? telefone : usuario.telefone,
+            cpf: cpf ? cpf : usuario.cpf,
+        };
+
+        req.usuario = usuario;
+
         next();
     } catch (error) {
         return res.status(400).json(error.message);
