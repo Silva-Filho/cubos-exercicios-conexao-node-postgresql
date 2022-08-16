@@ -49,7 +49,8 @@ const obterUsuario = async (req, res) => {
 
         const query = `
             select 
-                e.id as id_emprestimo, 
+                e.id as id_emprestimo,
+                l.id as id_livro, 
                 l.nome as nome_livro, 
                 l.editora, 
                 l.genero, 
@@ -137,21 +138,8 @@ const atualizarUsuario = async (req, res) => {
 };
 
 const excluirUsuario = async (req, res) => {
-    const { id } = req.params;
-
     try {
-        const usuario = await conexao.query("select * from usuarios where id = $1", [id]);
-
-        if (usuario.rowCount === 0) {
-            return res.status(404).json("Usuário não encontrado.");
-        }
-
-        const existeEmprestimos = await conexao.query("select * from emprestimos where id_usuario = $1", [id]);
-
-        // if (existeEmprestimos.rowCount) ?????
-        if (existeEmprestimos.rowCount > 0) {
-            return res.status(400).json("Não é possível excluir um usuário que possui empréstimos.");
-        }
+        const { id } = req.params;
 
         const query = "delete from usuarios where id = $1";
         const usuarioExcluido = await conexao.query(query, [id]);
