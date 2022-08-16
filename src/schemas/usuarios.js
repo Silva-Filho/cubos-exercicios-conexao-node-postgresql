@@ -1,7 +1,7 @@
 const { yup } = require("../configs/yup");
 
 const schemaCadastroUsuario = yup.object().shape({
-    nome: yup.string().required(), 
+    nome: yup.string().strict().required(), 
     idade: yup.number().strict(), 
     email: yup.string().email().required(), 
     telefone: yup.string().strict(), 
@@ -9,7 +9,7 @@ const schemaCadastroUsuario = yup.object().shape({
 });
 
 const schemaAtualizacaoUsuario = yup.object().shape({
-    nome: yup.string(), 
+    nome: yup.string().strict(), 
     idade: yup.number().strict(), 
     email: yup.string().email(), 
     telefone: yup.string().strict(), 

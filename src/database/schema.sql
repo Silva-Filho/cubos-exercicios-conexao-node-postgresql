@@ -29,7 +29,7 @@ CREATE TABLE usuarios (
     email VARCHAR(50) NOT NULL UNIQUE,
     telefone CHAR(11),
     -- cpf CHAR(11) NOT NULL UNIQUE,
-    cpf BIGINT NOT NULL UNIQUE CHECK(cpf > 0 AND cpf<=99999999999),
+    cpf BIGINT NOT NULL UNIQUE CHECK(cpf > 0 AND cpf <= 99999999999),
 );
 
 DROP TABLE IF EXISTS emprestimos;
