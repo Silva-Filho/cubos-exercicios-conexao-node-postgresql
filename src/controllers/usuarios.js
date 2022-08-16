@@ -32,7 +32,7 @@ const listarUsuarios = async (req, res) => {
             // @ts-ignore
             // const { rows: emprestimos } = await conexao.query(query, [usuario.id]);
             const { rows: emprestimos } = await conexao.query(query, [usuario.id_usuario]);
-            
+
             // @ts-ignore
             usuario.emprestimos = emprestimos;
         }
@@ -79,7 +79,7 @@ const cadastrarUsuario = async (req, res) => {
             insert into usuarios (nome, idade, email, telefone, cpf) 
             values ($1, $2, $3, $4, $5)
         `;
-        
+
         const usuario = await conexao.query(query, [nome, idade, email, telefone, cpf]);
 
         if (usuario.rowCount === 0) {
@@ -93,36 +93,15 @@ const cadastrarUsuario = async (req, res) => {
 };
 
 const atualizarUsuario = async (req, res) => {
-    const { id } = req.params;
-    const { nome, idade, email, telefone, cpf } = req.body;
-
     try {
-        const usuario = await conexao.query("select * from usuarios where id = $1", [id]);
-
-        if (usuario.rowCount === 0) {
-            return res.status(404).json("Usuário não encontrado.");
-        }
-
-        if ( !nome || !email || !cpf ) {
-            return res.status(400).json("Os campos nome, email e CPF são obrigatórios.");
-        }
-
-        // @ts-ignore
-        const { rows: usuarios } = await conexao.query("select * from usuarios where id != $1", [usuario.rows[0].id]);
-
-        const hasEmail = usuarios.some( item => {
-            // @ts-ignore
-            return item.email === email;
-        } );
-
-        const hasCpf = usuarios.some( item => {
-            // @ts-ignore
-            return item.cpf === cpf;
-        } );
-
-        if (hasEmail || hasCpf) {
-            return res.status(400).json("O campo email ou CPF já está cadastrado.");
-        }
+        const { id } = req.params;
+        const { 
+            nome_usuario, 
+            idade, 
+            email, 
+            telefone, 
+            cpf 
+        } = req.usuario;
 
         const query = `
             update usuarios 
@@ -134,8 +113,18 @@ const atualizarUsuario = async (req, res) => {
                 cpf = $5 
             where id = $6
         `;
-        
-        const usuarioAtualizado = await conexao.query(query, [nome, idade, email, telefone, cpf, id]);
+
+        const usuarioAtualizado = await conexao.query(
+            query, 
+            [
+                nome_usuario, 
+                idade, 
+                email, 
+                telefone, 
+                cpf, 
+                id
+            ]
+        );
 
         if (usuarioAtualizado.rowCount === 0) {
             return res.status(404).json("Não foi possível atualizar o usuário.");
@@ -158,7 +147,7 @@ const excluirUsuario = async (req, res) => {
         }
 
         const existeEmprestimos = await conexao.query("select * from emprestimos where id_usuario = $1", [id]);
-        
+
         // if (existeEmprestimos.rowCount) ?????
         if (existeEmprestimos.rowCount > 0) {
             return res.status(400).json("Não é possível excluir um usuário que possui empréstimos.");
