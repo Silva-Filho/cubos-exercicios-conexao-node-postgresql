@@ -24,30 +24,10 @@ const listarEmprestimos = async (req, res) => {
 };
 
 const obterEmprestimo = async (req, res) => {
-    const { id } = req.params;
-
     try {
-        const query = `
-            select 
-                e.id as id_emprestimo, 
-                u.nome as nome_usuario, 
-                u.telefone, 
-                u.email, 
-                l.nome as nome_livro, 
-                e.status_emprestimo 
-            from emprestimos e
-            left join usuarios u on e.id_usuario = u.id 
-            left join livros l on e.id_livro = l.id 
-            where e.id = $1
-        `;
+        const { emprestimo } = req;
 
-        const emprestimo = await conexao.query(query, [id]);
-
-        if (emprestimo.rowCount === 0) {
-            return res.status(404).json("Empréstimo não encontrado.");
-        }
-
-        return res.status(200).json(emprestimo.rows[0]);
+        return res.status(200).json(emprestimo);
     } catch (error) {
         return res.status(400).json(error.message);
     }
