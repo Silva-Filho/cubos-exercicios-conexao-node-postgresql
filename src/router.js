@@ -85,7 +85,10 @@ rotas.get("/emprestimos/:id",
     validarEmprestimos.verificarEmprestimoExiste, 
     emprestimos.obterEmprestimo
 );
-rotas.post("/emprestimos", emprestimos.cadastrarEmprestimo);
+rotas.post("/emprestimos", 
+    validarEmprestimos.verificarDadosCadastroEmprestimo, 
+    emprestimos.cadastrarEmprestimo
+);
 rotas.put("/emprestimos/:id", emprestimos.atualizarEmprestimo);
 rotas.delete("/emprestimos/:id", emprestimos.excluirEmprestimo);
 
