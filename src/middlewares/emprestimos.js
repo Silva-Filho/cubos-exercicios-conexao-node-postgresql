@@ -1,4 +1,5 @@
 const conexao = require("../conexao");
+const { schemaCadastroEmprestimo } = require("../schemas/emprestimos");
 
 const verificarEmprestimoExiste = async (req, res, next) => {
     try {
@@ -32,6 +33,17 @@ const verificarEmprestimoExiste = async (req, res, next) => {
     } 
 };
 
+const verificarDadosCadastroEmprestimo = async (req, res, next) => {
+    try {
+        await schemaCadastroEmprestimo.validate(req.body);
+        
+        next();
+    } catch (error) {
+        return res.status(400).json(error.message);
+    }
+};
+
 module.exports = {
     verificarEmprestimoExiste,
+    verificarDadosCadastroEmprestimo,
 };
