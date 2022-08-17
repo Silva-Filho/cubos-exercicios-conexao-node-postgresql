@@ -8,6 +8,7 @@ const emprestimos = require("./controllers/emprestimos");
 const validarAutores = require("./middlewares/autores");
 const validarLivros = require("./middlewares/livros");
 const validarUsuarios = require("./middlewares/usuarios");
+const validarEmprestimos = require("./middlewares/emprestimos");
 
 const rotas = express();
 
@@ -80,7 +81,10 @@ rotas.delete("/usuarios/:id",
 
 // emprestimos
 rotas.get("/emprestimos", emprestimos.listarEmprestimos);
-rotas.get("/emprestimos/:id", emprestimos.obterEmprestimo);
+rotas.get("/emprestimos/:id", 
+    validarEmprestimos.verificarEmprestimoExiste, 
+    emprestimos.obterEmprestimo
+);
 rotas.post("/emprestimos", emprestimos.cadastrarEmprestimo);
 rotas.put("/emprestimos/:id", emprestimos.atualizarEmprestimo);
 rotas.delete("/emprestimos/:id", emprestimos.excluirEmprestimo);
