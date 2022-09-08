@@ -15,10 +15,7 @@ const schemaCadastroEmprestimo = yup.object().shape({
         .required(),
     status_emprestimo: yup
         .string()
-        // @ts-ignore
-        .default(() => "pendente")
-        .matches(/(pendente|devolvido)/),
-    // status_emprestimo: yup.string().default({ status_emprestimo: "pendente" }),
+        .matches(/pendente|devolvido/),
 });
 
 module.exports = {
