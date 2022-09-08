@@ -18,6 +18,14 @@ const schemaCadastroEmprestimo = yup.object().shape({
         .matches(/pendente|devolvido/),
 });
 
+const schemaAtualizacaoEmprestimo = yup.object().shape({
+    status_emprestimo: yup
+        .string()
+        .matches(/pendente|devolvido/)
+        .required(),
+});
+
 module.exports = {
     schemaCadastroEmprestimo,
+    schemaAtualizacaoEmprestimo,
 };
