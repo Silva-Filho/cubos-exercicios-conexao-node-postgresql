@@ -1,6 +1,6 @@
 const conexao = require("../conexao");
 
-async function obterAutor(res,idInformado) {
+async function encontrarAutor( res, idInformado ) {
     const queryAutor = `
         select 
             a.id as id_autor,
@@ -10,15 +10,15 @@ async function obterAutor(res,idInformado) {
         where a.id = $1
     `;
 
-    const { rows: autor } = await conexao.query(queryAutor, [idInformado]);
+    const { rows: autor } = await conexao.query( queryAutor, [ idInformado ] );
 
-    if (autor.length === 0) {
-        return res.status(404).json("Autor não encontrado.");
+    if ( autor.length === 0 ) {
+        return res.status(404).json( "Autor não encontrado." );
     }
 
     return autor;
 }
 
 module.exports = {
-    obterAutor,
+    encontrarAutor,
 };
