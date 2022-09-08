@@ -1,61 +1,66 @@
-const conexao = require("../conexao");
-const { 
-    schemaCadastroUsuario, 
-    schemaAtualizacaoUsuario 
-} = require("../schemas/usuarios");
+const conexao = require( "../conexao" );
+const {
+    schemaCadastroUsuario,
+    schemaAtualizacaoUsuario
+} = require( "../schemas/usuarios" );
+const { encontrarUsuario } = require( "../utils/usuarios" );
 
-const verificarUsuarioExiste = async (req, res, next) => {
+const verificarUsuarioExiste = async ( req, res, next ) => {
     try {
-        const { id } = req.params;
+        const url = req.url;
 
-        const query = `
-            select 
-                id as id_usuario,
-                nome as nome_usuario,
-                idade,
-                email,
-                telefone,
-                cpf
-            from usuarios
-            where id = $1
-        `;
+        if ( url.includes( "/usuarios" ) ) {
+            const { id } = req.params;
 
-        const { rows: usuario } = await conexao.query(query, [id]);
-        
-        if (usuario.length === 0) {
-            return res.status(404).json("Usuário não encontrado.");
+            if ( id ) {
+                req.usuario = await encontrarUsuario( res, id );
+
+                if ( !req.usuario[ 0 ] ) {
+                    return;
+                }
+            }
         }
 
-        req.usuario = usuario[0];
+        if ( url.includes( "/emprestimos" ) ) {
+            const { id_usuario } = req.body;
+
+            if ( id_usuario ) {
+                req.usuario = await encontrarUsuario( res, id_usuario );
+
+                if ( !req.usuario[ 0 ] ) {
+                    return;
+                }
+            }
+        }
 
         next();
-    } catch (error) {
-        return res.status(400).json(error.message);
-    } 
-};
-
-const verificarDadosCadastroUsuario = async (req, res, next) => {
-    try {
-        await schemaCadastroUsuario.validate(req.body);
-
-        next();
-    } catch (error) {
-        return res.status(400).json(error.message);
+    } catch ( error ) {
+        return res.status( 400 ).json( error.message );
     }
 };
 
-const verificarCpfOuEmailUnicos = async (req, res, next) => {
+const verificarDadosCadastroUsuario = async ( req, res, next ) => {
+    try {
+        await schemaCadastroUsuario.validate( req.body );
+
+        next();
+    } catch ( error ) {
+        return res.status( 400 ).json( error.message );
+    }
+};
+
+const verificarCpfOuEmailUnicos = async ( req, res, next ) => {
     try {
         const { id } = req.params;
         const { email, cpf } = req.body;
 
-        const { rows: usuarios } = await conexao.query("select * from usuarios");
+        const { rows: usuarios } = await conexao.query( "select * from usuarios" );
 
-        const usuariosFiltrados = req.method === "PUT" ? 
+        const usuariosFiltrados = req.method === "PUT" ?
             usuarios.filter( item => {
                 // @ts-ignore
-                return item.id !== Number(id);
-            }) :
+                return item.id !== Number( id );
+            } ) :
             usuarios;
 
         const hasEmail = usuariosFiltrados.some( item => {
@@ -65,22 +70,22 @@ const verificarCpfOuEmailUnicos = async (req, res, next) => {
 
         const hasCpf = usuariosFiltrados.some( item => {
             // @ts-ignore
-            return Number(item.cpf) === cpf;
+            return Number( item.cpf ) === cpf;
         } );
-    
+
         if ( hasEmail || hasCpf ) {
-            return res.status(400).json("O campo email ou CPF já está cadastrado.");
+            return res.status( 400 ).json( "O campo email ou CPF já está cadastrado." );
         }
 
         next();
-    } catch (error) {
-        return res.status(400).json(error.message);
+    } catch ( error ) {
+        return res.status( 400 ).json( error.message );
     }
 };
 
-const verificarDadosAtualizacaoUsuario = async (req, res, next) => {
+const verificarDadosAtualizacaoUsuario = async ( req, res, next ) => {
     try {
-        await schemaAtualizacaoUsuario.validate(req.body);
+        await schemaAtualizacaoUsuario.validate( req.body );
 
         const { nome, idade, email, telefone, cpf } = req.body;
 
@@ -97,12 +102,12 @@ const verificarDadosAtualizacaoUsuario = async (req, res, next) => {
         req.usuario = usuario;
 
         next();
-    } catch (error) {
-        return res.status(400).json(error.message);
+    } catch ( error ) {
+        return res.status( 400 ).json( error.message );
     }
 };
 
-const verificarUsuarioTemEmprestimoPendente = async (req, res, next) => {
+const verificarUsuarioTemEmprestimoPendente = async ( req, res, next ) => {
     try {
         const { id } = req.params;
 
@@ -111,17 +116,17 @@ const verificarUsuarioTemEmprestimoPendente = async (req, res, next) => {
             from emprestimos 
             where id_usuario = $1 and status_emprestimo ='pendente'
         `;
-        const { rows: emprestimoPendente } = await conexao.query(query, [id]);
-        
-        if (emprestimoPendente.length > 0) {
+        const { rows: emprestimoPendente } = await conexao.query( query, [ id ] );
+
+        if ( emprestimoPendente.length > 0 ) {
             return res
-                .status(400)
-                .json("Não é possível excluir usuário que possui empréstimo(s) pendente(s).");
+                .status( 400 )
+                .json( "Não é possível excluir usuário que possui empréstimo(s) pendente(s)." );
         }
-        
+
         next();
-    } catch (error) {
-        return res.status(400).json(error.message);
+    } catch ( error ) {
+        return res.status( 400 ).json( error.message );
     }
 };
 
