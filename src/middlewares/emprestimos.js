@@ -1,7 +1,10 @@
-const conexao = require("../conexao");
-const { schemaCadastroEmprestimo } = require("../schemas/emprestimos");
+const conexao = require( "../conexao" );
+const {
+    schemaCadastroEmprestimo,
+    schemaAtualizacaoEmprestimo
+} = require( "../schemas/emprestimos" );
 
-const verificarEmprestimoExiste = async (req, res, next) => {
+const verificarEmprestimoExiste = async ( req, res, next ) => {
     try {
         const { id } = req.params;
 
@@ -19,31 +22,42 @@ const verificarEmprestimoExiste = async (req, res, next) => {
             where e.id = $1
         `;
 
-        const { rows: emprestimo } = await conexao.query(query, [id]);
+        const { rows: emprestimo } = await conexao.query( query, [ id ] );
 
-        if (emprestimo.length === 0) {
-            return res.status(404).json("Empréstimo não encontrado.");
+        if ( emprestimo.length === 0 ) {
+            return res.status( 404 ).json( "Empréstimo não encontrado." );
         }
 
-        req.emprestimo = emprestimo[0];
+        req.emprestimo = emprestimo[ 0 ];
 
         next();
-    } catch (error) {
-        return res.status(400).json(error.message);
-    } 
+    } catch ( error ) {
+        return res.status( 400 ).json( error.message );
+    }
 };
 
-const verificarDadosCadastroEmprestimo = async (req, res, next) => {
+const verificarDadosCadastroEmprestimo = async ( req, res, next ) => {
     try {
-        await schemaCadastroEmprestimo.validate(req.body);
-        
+        await schemaCadastroEmprestimo.validate( req.body );
+
         next();
-    } catch (error) {
-        return res.status(400).json(error.message);
+    } catch ( error ) {
+        return res.status( 400 ).json( error.message );
+    }
+};
+
+const verificarDadosAtualizacaoEmprestimo = async ( req, res, next ) => {
+    try {
+        await schemaAtualizacaoEmprestimo.validate( req.body );
+
+        next();
+    } catch ( error ) {
+        return res.status( 400 ).json( error.message );
     }
 };
 
 module.exports = {
     verificarEmprestimoExiste,
     verificarDadosCadastroEmprestimo,
+    verificarDadosAtualizacaoEmprestimo,
 };
