@@ -52,25 +52,11 @@ const cadastrarEmprestimo = async ( req, res ) => {
 
 const atualizarEmprestimo = async ( req, res ) => {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status_emprestimo } = req.body;
 
     try {
-        if ( !status ) {
-            return res.status( 400 ).json( "O campo status é obrigatório." );
-        }
-
-        if ( status !== "pendente" && status !== "devolvido" ) {
-            return res.status( 400 ).json( "Status informado incompatível com 'pendente' ou 'devolvido'." );
-        }
-
-        const emprestimo = await conexao.query( "select * from emprestimos where id = $1", [ id ] );
-
-        if ( emprestimo.rowCount === 0 ) {
-            return res.status( 404 ).json( "Empréstimo não encontrado." );
-        }
-
-        const query = "update emprestimos set status = $1 where id = $2";
-        const emprestimoAtualizado = await conexao.query( query, [ status, id ] );
+        const query = "update emprestimos set status_emprestimo = $1 where id = $2";
+        const emprestimoAtualizado = await conexao.query( query, [ status_emprestimo, id ] );
 
         if ( emprestimoAtualizado.rowCount === 0 ) {
             return res.status( 404 ).json( "Não foi possível atualizar o empréstimo." );
