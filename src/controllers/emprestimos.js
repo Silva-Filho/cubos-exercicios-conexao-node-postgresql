@@ -69,20 +69,8 @@ const atualizarEmprestimo = async ( req, res ) => {
 };
 
 const excluirEmprestimo = async ( req, res ) => {
-    const { id } = req.params;
-
     try {
-        const emprestimo = await conexao.query( "select * from emprestimos where id = $1", [ id ] );
-
-        if ( emprestimo.rowCount === 0 ) {
-            return res.status( 404 ).json( "Empréstimo não encontrado." );
-        }
-
-        // @ts-ignore
-        if ( emprestimo.rows[ 0 ].status.trim() === "pendente" ) {
-            return res.status( 404 ).json( "Não é possível excluir empréstimo com status igual a pendente." );
-        }
-
+        const { id } = req.params;        
         const query = "delete from emprestimos where id = $1";
         const emprestimoExcluido = await conexao.query( query, [ id ] );
 
