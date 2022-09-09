@@ -96,6 +96,10 @@ rotas.put( "/emprestimos/:id",
     validarEmprestimos.verificarEmprestimoExiste,
     emprestimos.atualizarEmprestimo
 );
-rotas.delete( "/emprestimos/:id", emprestimos.excluirEmprestimo );
+rotas.delete( "/emprestimos/:id",
+    validarEmprestimos.verificarEmprestimoExiste,
+    validarEmprestimos.verificarStatusPendenteEmprestimo,
+    emprestimos.excluirEmprestimo
+);
 
 module.exports = rotas;
