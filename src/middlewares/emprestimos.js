@@ -56,8 +56,23 @@ const verificarDadosAtualizacaoEmprestimo = async ( req, res, next ) => {
     }
 };
 
+const verificarStatusPendenteEmprestimo = async ( req, res, next ) => {
+    try {
+        const { emprestimo } = req;
+
+        if ( emprestimo.status_emprestimo.trim() === "pendente" ) {
+            return res.status( 404 ).json( "Não é possível excluir empréstimo com status igual a pendente." );
+        }
+
+        next();
+    } catch ( error ) {
+        return res.status( 400 ).json( error.message );
+    }
+};
+
 module.exports = {
     verificarEmprestimoExiste,
     verificarDadosCadastroEmprestimo,
     verificarDadosAtualizacaoEmprestimo,
+    verificarStatusPendenteEmprestimo,
 };
