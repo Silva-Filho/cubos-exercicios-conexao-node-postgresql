@@ -102,4 +102,6 @@ rotas.delete( "/emprestimos/:id",
     emprestimos.excluirEmprestimo
 );
 
-module.exports = rotas;
+module.exports = { 
+    rotas 
+};
